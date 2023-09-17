@@ -1,0 +1,8 @@
+{
+  "name": "react-express",
+  "version": "1.0.0",
+  "description": "React render com Express",
+  "main": "index.js",
+  "author": "Caio Fuzatto <caiofuzattom@gmail.com>",
+  "license": "MIT"
+}
