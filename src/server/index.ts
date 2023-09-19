@@ -9,21 +9,25 @@ import { App } from "../client/App";
 
 const app = express();
 
-app.get("/", (req, res) => {
-  const appContent = ReactDOMServer.renderToString(React.createElement(App));
-  const indexFile = path.resolve(`${__dirname}/../src/client/index.html`);
-  fs.readFile(indexFile, "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).send("Não foi possível carregar o app.");
-    }
+app.get('/', (req, res) => {
+  res.socket.on('error', (error) => console.log('Fatal', error));
 
-    return res.send(
-      data.replace(
-        '<div id="root"></div>',
-        `<div id="root">${appContent}</div>`
-      )
-    );
-  });
+  let didError = false;
+  const stream = ReactDOMServer.renderToPipeableStream(
+      React.createElement(App),
+      {
+          bootstrapScripts: ['/bundle.js'],
+          onShellReady: () => {
+              res.statusCode = didError ? 500 : 200;
+              res.setHeader('Content-type', 'text/html');
+              stream.pipe(res);
+          },
+          onError: (error) => {
+              didError = true;
+              console.log(error);
+          } 
+      }
+  );
 });
 
 app.use(express.static(path.join(__dirname, "public"), { maxAge: "30d" }));

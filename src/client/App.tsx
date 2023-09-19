@@ -1,18 +1,15 @@
-import React from 'react'
+import React, { lazy, Suspense } from "react";
+import { Counter } from "./Counter";
+const HeavyComponent = lazy(() => import("./HeavyComponent"));
 
 export const App = () => {
-  const [state, setState] = React.useState(0);
-  
-  const count = () => {
-    const newState = state + 1
-    setState(newState);
-    console.log(newState)
-  }
-
   return (
-    <div>
-      <h1>Counter: {state}</h1>
-      <button onClick={count}>Counter</button>
+    <div id="root">
+      <h1>Test suspense</h1>
+      <Suspense fallback={<h3>Carregando...</h3>}>
+        <HeavyComponent />
+      </Suspense>
+      <Counter />
     </div>
   );
-}
+};
